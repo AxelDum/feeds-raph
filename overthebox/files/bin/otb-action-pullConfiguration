@@ -1,0 +1,20 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+# shellcheck disable=SC1091,SC2016
+
+. /lib/overthebox
+
+path="$(otb_json_get "$1" arguments.path)"
+if [ -z "$path" ] || [ "$path" = "null" ]; then
+	otb_info "Cleaning all the cache"
+	echo "" > "$ACS_CACHE_PATH"
+	return
+fi
+
+otb_info "Removing $path from cache"
+
+tmp_file="$(mktemp)"
+grep -v "$path" "$ACS_CACHE_PATH" > "$tmp_file"
+mv "$tmp_file" "$ACS_CACHE_PATH"
+
+otb-autoconfigure
