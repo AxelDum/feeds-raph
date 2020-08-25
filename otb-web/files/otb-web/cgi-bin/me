@@ -1,0 +1,38 @@
+#!/bin/sh
+
+_error() {
+        printf "HTTP/1.0 %s\\r\\n" "$*"
+        exit 1
+}
+
+case "$REQUEST_METHOD" in
+        GET|HEAD) ;;
+        POST) otb-confirm-service "${REQUEST_URI##*/}" ;;
+#       *) _error 405 Method Not Allowed ;;
+esac
+
+LOCAL_IP_LIST_TO_WAN="[]"
+
+for IFACE in $(uci -q get firewall.wan.network); do
+        [ "$IFACE" = if0 ] && continue
+
+        IFNAME="$(uci -q get "network.$IFACE.ifname")"
+        [ "$IFNAME" ] || continue
+
+        LOCAL_IP=$(/sbin/ip addr show "$IFNAME" | grep inet | awk '{print $2}')
+        LOCAL_IP_LIST_TO_WAN=$(echo "$LOCAL_IP_LIST_TO_WAN" | jq --arg iface "$IFACE" --arg localIp "$LOCAL_IP" '. + [{"name":$iface,"ip":$localIp}]')
+done
+
+TUNNEL_STATUS=0
+[ "$(uci -q get "network.tun0")" = "interface" ]  && TUNNEL_STATUS=1
+
+printf "Content-type: application/json\\n\\n"
+
+jq -n \
+        --arg service "$(uci -q get overthebox.me.service)" \
+        --arg device "$(uci -q get overthebox.me.device_id)" \
+        --arg version "$(cat /etc/otb-version)" \
+        --arg dns "$(uci -q get dhcp.@dnsmasq[0].server)" \
+        --argjson localIpListToWan "$LOCAL_IP_LIST_TO_WAN" \
+        --arg tunnelStatus "$TUNNEL_STATUS" \
+        '{ service: $service, device: $device, version: $version, dns: $dns, localIpListToWan: $localIpListToWan, tunnelStatus: $tunnelStatus}'
