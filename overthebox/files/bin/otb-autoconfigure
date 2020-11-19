@@ -1,8 +1,6 @@
 #!/bin/sh
 # shellcheck disable=SC1090,SC1091,SC1066,SC1087,SC2086,SC2016,SC2039
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4:
-OCS_URL=192.168.100.10:8081
-
 . /lib/overthebox
 . /lib/functions/network.sh
 
@@ -11,7 +9,7 @@ _ocs_get() {
 	curl -s -m 10 --fail \
 	-H "X-Auth-OVH: $OTB_TOKEN" \
 	-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
-	-L "$OCS_URL/device/$OTB_DEVICE_ID/ocs/$path"
+	-L "$OTB_PROVISIONING/device/$OTB_DEVICE_ID/ocs/$path"
 }
 
 _ocs_post(){
@@ -22,10 +20,9 @@ _ocs_post(){
 		-H "Content-Type: application/json" \
 		-H "X-Auth-OVH: $OTB_TOKEN" \
 		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
-		-L "$OCS_URL/device/$OTB_DEVICE_ID/ocs/$path"
+		-L "$OTB_PROVISIONING/device/$OTB_DEVICE_ID/ocs/$path"
 		"$content"
 }
-
 
 _pull_config() {
 	_ocs_get "config/get$1?version=$2"
@@ -47,7 +44,7 @@ _check_connect_acs() {
 
 	logger "Checking connectivity"
 	local ret=0
-	curl -s -m 10 --fail -L "$OCS_URL/ping" > /dev/null || ret=$?
+	curl -s -m 10 --fail -L "$OTB_PROVISIONING/ping" > /dev/null || ret=$?
 
 	return $ret
 }
@@ -583,18 +580,22 @@ _apply_remote_conf() {
 _run() {
 	otb_reload
 
+	#OTB_DEVICE_ID="a5def614-0f23-4c17-a72b-f8d7704ce070"
+	#OTB_TOKEN='$aes$5mxLGiBQaM2GMrpWH6RS7OV7r37L1P+Ip3WKeWL6AxyGK5ATq9vO/P2r/4wkMwTOg5ZEGw=='
+
 	if [ -z "$OTB_DEVICE_ID" ]; then
+		logger "no device id in autoconfigure"
 		return
 	fi
 
 	_apply_remote_conf "1" "/dhcp/config"
 	_apply_remote_conf "1" "/dhcp/staticLease"
+	_apply_remote_conf "1" "/dns/localDomain"
 	_apply_remote_conf "1" "/dns/nameserver"
 	_apply_remote_conf "1" "/firewall/redirect"
 	_apply_remote_conf "1" "/firewall/rule"
 	_apply_remote_conf "1" "/network/interface"
 	_apply_remote_conf "1" "/network/route4"
-	_apply_remote_conf "1" "/network/route6"
+	#_apply_remote_conf "1" "/network/route6"
 }
-
 _run

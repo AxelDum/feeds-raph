@@ -6,7 +6,7 @@ OTB_DATA_DIR="/tmp/otb-data"
 OTB_HEADERS_FILE="/tmp/otb-daemon-headers"
 OTB_CONFIG_CHECK_DIR="/usr/share/otb/config-check.d"
 OTB_PROVISIONING="otb.eu.ovhapis.com"
-
+ACS_CACHE_PATH="/tmp/acs-cache"
 mkdir -p "$OTB_DATA_DIR" "$OTB_TODO_DIR"
 
 otb_reload() {
