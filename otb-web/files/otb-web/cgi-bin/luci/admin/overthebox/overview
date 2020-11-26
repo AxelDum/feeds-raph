@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# This is a bad hack needed to force the redirect to / when
+# browsers do not respect the no-cache policy on the redirect of
+# / => /cgi-bin/luci/admin/overthebox/overview on luci
+printf "Status: 307 Moved\nLocation: /\n\n"
