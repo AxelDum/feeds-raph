@@ -56,6 +56,10 @@ otb_json_get() {
 	jq -r -n --argjson content "$1" "\$content.$2"
 }
 
+get_otb_config_mode() {
+	[ "$(uci get uhttpd.main.home)" = "/otb-web" ] && echo "autoconfigure" || echo "legacy"
+}
+
 otb_call() {
 	method=$1
 	path=$2
@@ -66,6 +70,7 @@ otb_call() {
 		-X "$method" \
 		-H "Content-Type: application/json" \
 		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
+		-H "X-Overthebox-Configuration-Mode: $(get_otb_config_mode)" \
 		${jwt:+-H "Authorization: Bearer $jwt"} \
 		"https://$OTB_PROVISIONING/1.0/$path" \
 		"$@"

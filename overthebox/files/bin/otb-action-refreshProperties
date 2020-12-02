@@ -50,6 +50,7 @@ _get_interface_json() {
 		--arg trafficcontrol "$trafficcontrol" \
 		--arg upload "$upload" \
 		--arg download "$download" \
+		--arg configuration_mode "$(get_otb_config_mode)" \
 		--arg multipath "$multipath" '{
 			as: $asn,
 			ip: $ipaddr,
@@ -64,6 +65,7 @@ _get_interface_json() {
 			upload: $upload|tonumber,
 			download: $download|tonumber,
 			multipath_status: $multipath,
+			configuration_mode: $configuration_mode
 		}'
 }
 

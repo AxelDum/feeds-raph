@@ -1,0 +1,14 @@
+#!/bin/sh
+# shellcheck disable=SC1091
+set -e
+
+. /lib/overthebox
+
+if [ "$(echo "$1" | jq -e -r '.arguments.mode')" = "autoconfigure" ]; then
+	uci set uhttpd.main.home=/otb-web;
+else
+	uci set uhttpd.main.home=/www;
+fi
+
+uci commit
+/etc/init.d/uhttpd restart
