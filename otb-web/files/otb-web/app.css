@@ -92,3 +92,9 @@ img {
         font-size: 9vw;
     }
 }
+.btn {
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+}
