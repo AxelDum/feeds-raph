@@ -521,19 +521,36 @@ _apply_remote_conf() {
 		reload_command="/etc/init.d/network reload"
 		_set_conf_static 'network' 'interface' "$ret" \
 		"$reload_command" "interfaceName"  '{
-				"gateway":   "\(.gateway)",
-				"ifname":    "\(.ifname)",
-				"ip4table":  "\(.ip4table)",
-				"ip6table":  "\(.ip6table)",
-				"ipaddr":    "\(.ipAddr)",
-				"ipv6":      "\(.ipv6)",
-				"mtu":       "\(.mtu)",
-				"multipath": "\(.multipath)",
-				"netmask":   "\(.netmask)",
-				"proto":     "\(.proto)",
-				"source":    "\(.source)",
-				"type":      "\(.type)"
+				"gateway":        "\(.gateway)",
+				"ifname":         "\(.ifname)",
+				"ip4table":       "\(.ip4table)",
+				"ip6table":       "\(.ip6table)",
+				"ipaddr":         "\(.ipAddr)",
+				"ipv6":           "\(.ipv6)",
+				"mtu":            "\(.mtu)",
+				"multipath":      "\(.multipath)",
+				"netmask":        "\(.netmask)",
+				"proto":          "\(.proto)",
+				"source":         "\(.source)",
+				"type":           "\(.type)",
+				"trafficcontrol": "\(.trafficcontrol)",
+				"download":       "\(.download)",
+				"upload":         "\(.upload)"
 		}' '/network/interface'
+
+	elif [ "$url" = "/network/dscp" ]; then
+		reload_command="/etc/init.d/network reload"
+		_set_conf_array "$ret" "dscp.@classify" '{
+			"direction": "\(.direction)",
+			"proto":     "\(.proto)",
+			"class":     "\(.class)",
+			"comment":   "\(.comment)",
+			"src_ip":    "\(.srcIP)",
+			"src_port":  "\(.srcPort)",
+			"dest_ip":   "\(.destIP)",
+			"dest_port": "\(.destPort)",
+			"id":        "\(.id)"
+		}' "$reload_command" "/network/dscp"
 
 	# Special function used to find the network automaticaly
 	elif [ "$url" = '/network/route4' ]; then
