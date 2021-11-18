@@ -6,33 +6,24 @@
 
 _ocs_get() {
 	path="$1"
-	curl -s -m 10 --fail \
-	-H "X-Auth-OVH: $OTB_TOKEN" \
-	-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
-	-L "$OTB_PROVISIONING/device/$OTB_DEVICE_ID/ocs/$path"
+	otb_device_get "ocs/$path"
 }
 
 _ocs_post(){
 	path="$1"
 	content="$2"
-	curl --silent --show-error --max-time 5 \
-		-X "POST" \
-		-H "Content-Type: application/json" \
-		-H "X-Auth-OVH: $OTB_TOKEN" \
-		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
-		-L "$OTB_PROVISIONING/device/$OTB_DEVICE_ID/ocs/$path"
-		"$content"
+	otb_device_post "ocs/$path" --data "$content"
 }
 
 _pull_config() {
-	_ocs_get "config/get$1?version=$2"
+	_ocs_get "config$1"
 }
 
 _update_conf_status() {
 	conf_path="$1"
 	status="$2"
 
-	_ocs_post "status/set$conf_path/$status"
+	_ocs_post "config$conf_path" '{"status": "'$status'"}'
 }
 
 _check_connect_acs() {
@@ -597,9 +588,6 @@ _apply_remote_conf() {
 _run() {
 	otb_reload
 
-	#OTB_DEVICE_ID="a5def614-0f23-4c17-a72b-f8d7704ce070"
-	#OTB_TOKEN='$aes$5mxLGiBQaM2GMrpWH6RS7OV7r37L1P+Ip3WKeWL6AxyGK5ATq9vO/P2r/4wkMwTOg5ZEGw=='
-
 	if [ -z "$OTB_DEVICE_ID" ]; then
 		logger "no device id in autoconfigure"
 		return
@@ -615,4 +603,5 @@ _run() {
 	_apply_remote_conf "1" "/network/route4"
 	#_apply_remote_conf "1" "/network/route6"
 }
+
 _run
