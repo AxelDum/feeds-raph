@@ -35,7 +35,7 @@ _check_connect_acs() {
 
 	logger "Checking connectivity"
 	local ret=0
-	curl -s -m 10 --fail -L "$OTB_PROVISIONING/ping" > /dev/null || ret=$?
+	curl -s -m 10 --fail -L "$OTB_PROVISIONING/1.0/ping" > /dev/null || ret=$?
 
 	return $ret
 }
