@@ -12,7 +12,7 @@ body {
     margin: 0;
 }
 * {
-    font-weight: 350;
+    font-weight: 450;
     font-size: 1em;
 }
 b, button {
@@ -97,4 +97,46 @@ img {
     font-size: 1rem;
     line-height: 1.5;
     border-radius: .25rem;
+}
+#loading-register {
+    color: transparent;
+    background-color: #ccccf;
+}
+.loading-spinner {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-image: url('data:image/svg+xml,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">\
+<style>circle { animation: 4s a infinite linear, 3s o infinite linear; }\
+@keyframes a {from{stroke-dasharray:100 0}50%25{stroke-dasharray:0 100}to{stroke-dasharray:100 0}}\
+@keyframes o {from{stroke-dashoffset:75}to{stroke-dashoffset:375}}\
+<%2Fstyle><circle r="15.9154943092" stroke-width="7" fill="none" stroke="white" />\
+</svg>');
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+#button-register {
+    margin-left: 0.4em;
+}
+
+.first-paragraphe {
+    margin-top: 0;
+    padding-top: 0;
 }
